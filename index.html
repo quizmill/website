@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>quizmill — the mill that grinds questions into knowledge</title>
+  <meta name="description" content="quizmill is an open-source engine that turns a folder of JSON — a learning pack — into a fast, installable, offline-first practice app. Your AI agent writes the questions." />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <meta property="og:title" content="quizmill" />
+  <meta property="og:description" content="The mill that grinds questions into knowledge. An open-source practice-app engine for agent-built learning packs." />
+  <meta property="og:url" content="https://quizmill.dev" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650;9..144,750&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="#top" aria-label="quizmill home">
+    <svg class="wheel" id="header-wheel" viewBox="0 0 64 64" width="34" height="34" aria-hidden="true">
+      <g class="wheel-spin">
+        <path class="seg seg-accent" d="M 25.79 8.82 A 24 24 0 0 1 38.21 8.82"/>
+        <path class="seg" d="M 44.00 11.22 A 24 24 0 0 1 52.78 20.00"/>
+        <path class="seg" d="M 55.18 25.79 A 24 24 0 0 1 55.18 38.21"/>
+        <path class="seg" d="M 52.78 44.00 A 24 24 0 0 1 44.00 52.78"/>
+        <path class="seg" d="M 38.21 55.18 A 24 24 0 0 1 25.79 55.18"/>
+        <path class="seg" d="M 20.00 52.78 A 24 24 0 0 1 11.22 44.00"/>
+        <path class="seg" d="M 8.82 38.21 A 24 24 0 0 1 8.82 25.79"/>
+        <path class="seg" d="M 11.22 20.00 A 24 24 0 0 1 20.00 11.22"/>
+      </g>
+      <circle cx="32" cy="32" r="5" class="hub"/>
+    </svg>
+    <span class="wordmark">quizmill</span>
+  </a>
+  <nav class="site-nav">
+    <a href="#apps">Apps</a>
+    <a href="#agent">Agent</a>
+    <a href="#format">Format</a>
+    <a href="#install">Install</a>
+    <a class="gh-btn" href="https://github.com/quizmill/quizmill">
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ====================== HERO ====================== -->
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Open-source practice-app engine</p>
+      <h1>The mill that grinds <em>questions</em> into <em>knowledge</em>.</h1>
+      <p class="lede">
+        Bring a folder of JSON — a <strong>learning pack</strong> — and quizmill
+        turns it into a fast, installable, offline-first practice app.
+        Better still: don't write the questions at all.
+        <strong>Your AI agent does.</strong>
+      </p>
+      <div class="code-block" data-copy>
+        <button class="copy-btn" aria-label="Copy commands">copy</button>
+        <pre><code><span class="c">« three commands to your own practice app »</span>
+git clone https://github.com/quizmill/quizmill
+cd quizmill &amp;&amp; npm install
+npm run dev</code></pre>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/quizmill/quizmill">Star on GitHub</a>
+        <a class="btn btn-ghost" href="#try">Feel the loop ↓</a>
+      </div>
+    </div>
+
+    <!-- Live mini practice session -->
+    <div class="hero-demo" id="try">
+      <div class="demo-frame">
+        <div class="demo-titlebar">
+          <span class="demo-dot" style="--c:#ff5f57"></span>
+          <span class="demo-dot" style="--c:#febc2e"></span>
+          <span class="demo-dot" style="--c:#28c840"></span>
+          <span class="demo-title">Solar System Practice — the bundled demo pack, live</span>
+        </div>
+        <div class="quiz" id="quiz" aria-live="polite"></div>
+      </div>
+      <p class="demo-hint">↑ This isn't a video. Get one wrong — watch it come back.</p>
+    </div>
+  </section>
+
+  <!-- ====================== EVERY PACK ITS OWN APP ====================== -->
+  <section class="section" id="apps">
+    <p class="eyebrow">One engine, endless apps</p>
+    <h2>Every pack becomes <em>its own app</em>.</h2>
+    <p class="section-lede">
+      Title, icon, theme, categories — all generated from the pack manifest at
+      build time. Pick a pack, watch the app change:
+    </p>
+    <div class="packswitch">
+      <div class="pack-chips" id="pack-chips" role="tablist" aria-label="Example packs"></div>
+      <div class="phone-wrap">
+        <div class="phone" id="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="app-icon" id="app-icon">SSP</div>
+            <h3 class="app-title" id="app-title">Solar System Practice</h3>
+            <p class="app-subtitle" id="app-subtitle">The demo pack.</p>
+            <div class="app-cats" id="app-cats"></div>
+            <button class="app-practice" id="app-practice" type="button">Practice</button>
+            <div class="app-installbar">⊕ Add to Home Screen — works offline</div>
+          </div>
+        </div>
+        <div class="phone-caption" id="phone-caption"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== AGENT STORY ====================== -->
+  <section class="section section-dark" id="agent">
+    <p class="eyebrow">The authoring story</p>
+    <h2>You don't write packs. <em>Your agent does.</em></h2>
+    <p class="section-lede">
+      quizmill ships a <code>create-learning-pack</code> skill. Open the repo in
+      Claude Code (or any agent that reads project skills), say what you want
+      to learn, and the agent scopes it, writes the bank, and loops on the
+      validator until the pack is clean. Malformed content can't reach the app.
+    </p>
+    <div class="terminal" id="terminal">
+      <div class="terminal-bar">
+        <span class="demo-dot" style="--c:#ff5f57"></span>
+        <span class="demo-dot" style="--c:#febc2e"></span>
+        <span class="demo-dot" style="--c:#28c840"></span>
+        <span class="terminal-title">claude — ~/quizmill</span>
+      </div>
+      <div class="terminal-body" id="terminal-body"></div>
+    </div>
+    <div class="agent-steps">
+      <div class="agent-step"><span>1</span> The skill scopes topic, level &amp; categories with you</div>
+      <div class="agent-step"><span>2</span> The agent writes the pack — manifest, questions, scenarios</div>
+      <div class="agent-step"><span>3</span> The validator is the contract — it loops until clean</div>
+      <div class="agent-step"><span>4</span> Activate, run, practice — your app is live</div>
+    </div>
+  </section>
+
+  <!-- ====================== PACK FORMAT ====================== -->
+  <section class="section" id="format">
+    <p class="eyebrow">Grist for the mill</p>
+    <h2>A pack is <em>three JSON files</em>. That's the whole format.</h2>
+    <div class="format-tabs">
+      <div class="tab-row" role="tablist" aria-label="Pack files">
+        <button class="tab is-active" data-tab="manifest" role="tab" aria-selected="true">pack.json</button>
+        <button class="tab" data-tab="questions" role="tab" aria-selected="false">questions.json</button>
+        <button class="tab" data-tab="scenarios" role="tab" aria-selected="false">scenarios.json</button>
+      </div>
+      <div class="tab-panels">
+        <pre class="tab-panel is-active" data-panel="manifest"><code>{
+  "schemaVersion": 1,
+  "id": "k8s-networking",
+  "title": "Kubernetes Networking",
+  "description": "Services, Ingress, DNS and NetworkPolicy, drilled.",
+  "homeSubtitle": "Packets find a way.",
+  "themeColor": "#7c3aed",
+  "categories": [
+    { "key": "services", "label": "Services & kube-proxy", "weight": 0.4 },
+    { "key": "ingress",  "label": "Ingress & Gateway",     "weight": 0.3 },
+    { "key": "netpol",   "label": "NetworkPolicy",         "weight": 0.3 }
+  ]
+}</code></pre>
+        <pre class="tab-panel" data-panel="questions"><code>[
+  {
+    "id": "k8s-networking-services-001",
+    "categoryKey": "services",
+    "difficulty": 3,
+    "prompt": "A ClusterIP Service routes to zero endpoints. What's the most likely cause?",
+    "options": [
+      { "key": "A", "text": "kube-proxy is not running on the control plane" },
+      { "key": "B", "text": "The Service selector doesn't match any Pod labels" },
+      { "key": "C", "text": "CoreDNS has no record for the Service" },
+      { "key": "D", "text": "The Pods lack a readinessProbe" }
+    ],
+    "correctKey": "B",
+    "explanation": "Endpoints are computed from the selector; no matching labels → empty endpoint set. DNS still resolves (C) — it just points at nothing.",
+    "source": "generated",
+    "reviewStatus": "reviewed"
+  }
+]</code></pre>
+        <pre class="tab-panel" data-panel="scenarios"><code>[
+  {
+    "id": "checkout-outage",
+    "title": "The checkout outage",
+    "stem": "It's 09:02 on Black Friday. Checkout pods are healthy but the Service returns connection refused for ~20% of requests..."
+  }
+]</code></pre>
+      </div>
+    </div>
+    <p class="format-note">
+      The Zod schema + validator CLI (<code>npm run pack:validate</code>) cross-checks
+      ids, category references, scenario references and weights — and exits
+      non-zero with per-question errors. That's what agents loop on.
+    </p>
+  </section>
+
+  <!-- ====================== FEATURES ====================== -->
+  <section class="section section-tint" id="features">
+    <p class="eyebrow">The full breadth</p>
+    <h2>Everything ships <em>in every pack</em>.</h2>
+    <div class="feature-grid">
+      <div class="feature"><h3>⟳ Mistakes that come back</h3><p>Wrong answers queue up and are re-asked until you rescue them. The loop is the product.</p></div>
+      <div class="feature"><h3>◌ Unseen-biased practice</h3><p>Weighted random selection that favours questions you haven't met, tunable per category blueprint.</p></div>
+      <div class="feature"><h3>▦ Offline-first PWA</h3><p>Installable to the home screen with a versioned service worker. Aeroplane-mode proof.</p></div>
+      <div class="feature"><h3>✎ Per-question feedback</h3><p>Thumbs up/down with comments, surfaced in Settings so pack authors can curate the bank.</p></div>
+      <div class="feature"><h3>↗ Source attribution</h3><p>Questions carry a <code>sourceRef</code>; the answer panel links to the original author's work.</p></div>
+      <div class="feature"><h3>⇅ Optional cloud sync</h3><p>Magic-link auth + Supabase mirroring with a retry queue. Dormant unless you configure it.</p></div>
+      <div class="feature"><h3>⌂ Private by default</h3><p>Packs are gitignored and never enter the engine's history. Private GitHub repos install fine.</p></div>
+      <div class="feature"><h3>▲ Deploy anywhere</h3><p><code>npm run build</code> emits a plain static site — Cloudflare Pages, GitHub Pages, Netlify, a USB stick.</p></div>
+    </div>
+  </section>
+
+  <!-- ====================== INSTALL ====================== -->
+  <section class="section" id="install">
+    <p class="eyebrow">Take it home</p>
+    <h2>Install it <em>your way</em>.</h2>
+    <div class="install-grid">
+      <div class="install-card">
+        <h3>Run the engine</h3>
+        <div class="code-block" data-copy>
+          <button class="copy-btn" aria-label="Copy commands">copy</button>
+          <pre><code>git clone https://github.com/quizmill/quizmill
+cd quizmill &amp;&amp; npm install
+npm run dev</code></pre>
+        </div>
+        <p>Boots with the solar-system demo pack.</p>
+      </div>
+      <div class="install-card">
+        <h3>Install a published pack</h3>
+        <div class="code-block" data-copy>
+          <button class="copy-btn" aria-label="Copy commands">copy</button>
+          <pre><code>npm run pack:list
+npm run pack:use quizmill/pack-claude-cert
+npm run dev</code></pre>
+        </div>
+        <p>Any GitHub repo with a valid pack works — private ones too, through your own <code>git clone</code> access.</p>
+      </div>
+      <div class="install-card">
+        <h3>Publish your own</h3>
+        <div class="code-block" data-copy>
+          <button class="copy-btn" aria-label="Copy commands">copy</button>
+          <pre><code># pack.json + questions.json in a repo
+npm run pack:validate packs/my-topic
+git push   # → installable by anyone</code></pre>
+        </div>
+        <p>PR it into the registry and it shows up in <code>pack:list</code>.</p>
+      </div>
+    </div>
+
+    <div class="packs-row">
+      <a class="pack-card" href="https://github.com/quizmill/quizmill">
+        <span class="pack-swatch" style="--c:#0f766e">SSP</span>
+        <span><strong>Solar System</strong><br/>the bundled demo</span>
+      </a>
+      <a class="pack-card" href="https://github.com/quizmill/pack-claude-cert">
+        <span class="pack-swatch" style="--c:#1e3a5f">CCP</span>
+        <span><strong>Claude Cert Practice</strong><br/>635 questions, community-curated</span>
+      </a>
+      <a class="pack-card pack-card-you" href="https://github.com/quizmill/quizmill#publish-a-pack">
+        <span class="pack-swatch" style="--c:#b45309">?</span>
+        <span><strong>Your pack here</strong><br/>publish &amp; PR the registry</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="brand">
+      <svg class="wheel" viewBox="0 0 64 64" width="28" height="28" aria-hidden="true">
+        <g class="wheel-spin">
+          <path class="seg seg-accent" d="M 25.79 8.82 A 24 24 0 0 1 38.21 8.82"/>
+          <path class="seg" d="M 44.00 11.22 A 24 24 0 0 1 52.78 20.00"/>
+          <path class="seg" d="M 55.18 25.79 A 24 24 0 0 1 55.18 38.21"/>
+          <path class="seg" d="M 52.78 44.00 A 24 24 0 0 1 44.00 52.78"/>
+          <path class="seg" d="M 38.21 55.18 A 24 24 0 0 1 25.79 55.18"/>
+          <path class="seg" d="M 20.00 52.78 A 24 24 0 0 1 11.22 44.00"/>
+          <path class="seg" d="M 8.82 38.21 A 24 24 0 0 1 8.82 25.79"/>
+          <path class="seg" d="M 11.22 20.00 A 24 24 0 0 1 20.00 11.22"/>
+        </g>
+        <circle cx="32" cy="32" r="5" class="hub"/>
+      </svg>
+      <span class="wordmark">quizmill</span>
+    </div>
+    <p>Answer → review → retry. The wheel keeps turning.</p>
+    <nav>
+      <a href="https://github.com/quizmill/quizmill">Engine</a>
+      <a href="https://github.com/quizmill/quizmill/blob/main/tools/pack/registry.json">Pack registry</a>
+      <a href="https://github.com/quizmill/pack-claude-cert">Claude Cert pack</a>
+      <a href="https://github.com/quizmill/quizmill/blob/main/LICENSE">MIT</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+</body>
+</html>
