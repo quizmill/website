@@ -358,3 +358,134 @@ h1 em, h2 em { font-style: italic; color: var(--grain); }
 @keyframes fall {
   to { transform: translateY(105vh) rotate(var(--r, 540deg)); opacity: 0.9; }
 }
+/* In-phone confetti: absolute within the host, smaller drop. */
+.confetti-local { position: absolute; width: 7px; height: 11px; animation-name: fall-local; }
+@keyframes fall-local {
+  to { transform: translateY(520px) rotate(var(--r, 540deg)); opacity: 0.9; }
+}
+
+/* ——— sticker toast (hero frame + phone) ——— */
+.sticker-toast {
+  position: absolute; left: 12px; right: 12px; bottom: 14px; z-index: 20;
+  display: flex; align-items: center; gap: 12px;
+  background: var(--ink); color: var(--paper);
+  border-radius: 14px; padding: 11px 14px; font-size: 13.5px; line-height: 1.35;
+  box-shadow: 0 12px 32px rgba(33,29,24,0.35);
+  animation: toast-in 0.45s cubic-bezier(.34,1.4,.44,1), toast-out 0.4s ease-in 2.7s forwards;
+}
+.sticker-toast b { display: block; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grain); }
+.st-emoji { font-size: 28px; line-height: 1; animation: st-wobble 0.9s ease 0.3s; }
+.demo-frame { position: relative; }
+@keyframes toast-in { from { transform: translateY(24px) scale(0.9); opacity: 0; } }
+@keyframes toast-out { to { transform: translateY(16px); opacity: 0; } }
+@keyframes st-wobble {
+  25% { transform: rotate(-14deg) scale(1.25); }
+  60% { transform: rotate(10deg) scale(1.1); }
+}
+
+/* ——— mini quizmill (inside the phone) ——— */
+.phone-screen { position: relative; --acs: color-mix(in srgb, var(--ac, var(--teal)) 12%, transparent); }
+.mini-app { display: flex; flex-direction: column; min-height: 432px; }
+.ma-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; min-height: 34px; }
+.ma-head .app-icon { width: 40px; height: 40px; border-radius: 12px; font-size: 14px; margin-bottom: 0; }
+.ma-nav { display: flex; gap: 7px; }
+.ma-nav button {
+  width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+  font-size: 14px; line-height: 1; transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.ma-nav button:hover { transform: rotate(12deg) scale(1.1); border-color: var(--ac, var(--teal)); }
+.mini-app .app-title { font-size: 19px; }
+.mini-app .app-subtitle { margin-bottom: 12px; }
+.ma-back {
+  border: none; background: none; cursor: pointer; padding: 4px 8px 4px 0;
+  font: 650 13px var(--body); color: var(--stone);
+}
+.ma-back:hover { color: var(--ac, var(--teal)); }
+.ma-count { font: 650 11px var(--mono); color: var(--stone); }
+.ma-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.ma-stat { background: var(--card); border: 1.5px solid var(--line); border-radius: 12px; padding: 8px 12px; }
+.ma-stat b { font-family: var(--display); font-size: 19px; display: block; line-height: 1.15; }
+.ma-stat span { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); }
+.ma-cats { display: flex; flex-direction: column; gap: 7px; }
+.ma-cat {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; text-align: left;
+  border: 1.5px solid var(--line); border-radius: 12px; background: var(--card);
+  padding: 9px 12px; font: 650 13px/1.3 var(--body); color: var(--ink); cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.12s ease;
+}
+.ma-cat:hover { border-color: var(--ac, var(--teal)); transform: translateX(2px); }
+.ma-cat small { display: block; font-weight: 500; color: var(--stone); font-size: 11px; }
+.ma-cat-go { color: var(--stone); font-size: 16px; }
+.mini-app .app-practice { margin-top: 12px; }
+.ma-chip {
+  align-self: flex-start; font-size: 9.5px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ac, var(--teal)); background: var(--acs); border-radius: 999px; padding: 3px 9px; margin-bottom: 8px;
+}
+.ma-q { font-size: 14px; font-weight: 650; line-height: 1.4; margin-bottom: 10px; }
+.ma-opts { display: flex; flex-direction: column; gap: 6px; }
+.ma-opt {
+  display: flex; align-items: flex-start; gap: 8px; text-align: left;
+  border: 1.5px solid var(--line); border-radius: 11px; background: var(--card);
+  padding: 8px 10px; font: 550 12.5px/1.35 var(--body); color: var(--ink); cursor: pointer;
+}
+.ma-opt:hover:not(:disabled) { border-color: var(--ac, var(--teal)); }
+.ma-opt:disabled { cursor: default; }
+.ma-opt .key {
+  flex-shrink: 0; width: 19px; height: 19px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--stone); font: 750 10px/1 var(--mono); color: var(--stone);
+}
+.ma-opt.is-correct { border-color: var(--ok); background: var(--ok-soft); }
+.ma-opt.is-correct .key { background: var(--ok); border-color: var(--ok); color: #fff; }
+.ma-opt.is-wrong { border-color: var(--warn); background: var(--warn-soft); }
+.ma-opt.is-wrong .key { background: var(--warn); border-color: var(--warn); color: #fff; }
+.ma-opt.is-dim { opacity: 0.5; }
+.ma-feedback { border-radius: 11px; padding: 9px 11px; margin-top: 9px; font-size: 11.5px; line-height: 1.45; }
+.ma-feedback.good { background: var(--ok-soft); }
+.ma-feedback.bad { background: var(--warn-soft); }
+.ma-feedback b { display: block; font-family: var(--display); font-size: 13px; }
+.ma-feedback.good b { color: var(--ok); }
+.ma-feedback.bad b { color: var(--warn); }
+.ma-next {
+  width: 100%; margin-top: 9px; border: none; border-radius: 11px;
+  background: var(--ink); color: var(--paper); font: 700 13px/1 var(--body); padding: 11px; cursor: pointer;
+}
+.ma-next:hover { background: var(--ac, var(--teal)); }
+.ma-end { text-align: center; margin: auto 0; }
+.ma-score { font-family: var(--display); font-weight: 750; font-size: 44px; line-height: 1; }
+.ma-end-sub { color: var(--stone); font-size: 12.5px; margin: 6px 0 16px; }
+.ma-ghost {
+  width: 100%; margin-top: 8px; border: 1.5px solid var(--line); border-radius: 13px;
+  background: none; color: var(--ink); font: 650 13px/1 var(--body); padding: 11px; cursor: pointer;
+}
+.ma-ghost:hover { border-color: var(--ac, var(--teal)); color: var(--ac, var(--teal)); }
+.ma-h { font-family: var(--display); font-weight: 750; font-size: 18px; margin: 0 0 10px; }
+.ma-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.ma-sticker {
+  border: 2px solid var(--line); border-radius: 12px; background: var(--paper-deep);
+  padding: 8px 6px; text-align: center; font-size: 10px; line-height: 1.3; color: var(--stone);
+}
+.ma-sticker b { display: block; font-size: 11px; color: inherit; }
+.ma-sticker small { display: block; font-size: 9px; }
+.ma-sticker-emoji { font-size: 22px; display: block; filter: grayscale(1); opacity: 0.35; }
+.ma-sticker.is-earned { background: var(--card); border-color: var(--grain); color: var(--ink); }
+.ma-sticker.is-earned .ma-sticker-emoji { filter: none; opacity: 1; }
+.ma-locked { text-transform: uppercase; letter-spacing: 0.1em; font-size: 8px !important; }
+.ma-note { color: var(--stone); font-size: 11px; margin: 10px 0 0; text-align: center; }
+.ma-section { font-size: 10px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); margin: 4px 0 7px; }
+.ma-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.ma-bar-row { font-size: 11.5px; font-weight: 650; display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; }
+.ma-bar-row em { font-style: normal; color: var(--stone); font-weight: 550; }
+.ma-bar-row .bar { grid-column: 1 / -1; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.ma-bar-row .bar i { display: block; height: 100%; width: var(--p, 0%); background: var(--ac, var(--teal)); border-radius: 3px; transition: width 0.5s ease; }
+.ma-days { display: flex; align-items: flex-end; gap: 4px; height: 56px; }
+.ma-days i { flex: 1; height: var(--h, 40%); background: var(--acs); border-top: 3px solid var(--ac, var(--teal)); border-radius: 3px 3px 0 0; }
+.ma-streak {
+  font-size: 11px; font-weight: 750; color: var(--grain);
+  background: var(--grain-soft); border-radius: 999px; padding: 4px 10px;
+}
+
+/* ——— quiz end: link to the real app ——— */
+.quiz-link { display: block; margin-top: 12px; font-size: 13.5px; font-weight: 650; color: var(--grain); text-decoration: none; }
+.quiz-link:hover { text-decoration: underline; }

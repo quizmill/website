@@ -10,6 +10,7 @@
   <meta property="og:description" content="The mill that grinds questions into knowledge. An open-source practice-app engine for agent-built learning packs." />
   <meta property="og:url" content="https://quizmill.dev" />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://quizmill.dev/assets/avatar.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650;9..144,750&display=swap" rel="stylesheet" />
@@ -39,6 +40,7 @@
     <a href="#agent">Agent</a>
     <a href="#format">Format</a>
     <a href="#install">Install</a>
+    <a href="https://quizmill-try.pages.dev" target="_blank" rel="noopener">Try it ↗</a>
     <a class="gh-btn" href="https://github.com/quizmill/quizmill">
       <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
       GitHub
@@ -67,8 +69,8 @@ cd quizmill &amp;&amp; npm install
 npm run dev</code></pre>
       </div>
       <div class="cta-row">
-        <a class="btn btn-primary" href="https://github.com/quizmill/quizmill">Star on GitHub</a>
-        <a class="btn btn-ghost" href="#try">Feel the loop ↓</a>
+        <a class="btn btn-primary" href="https://quizmill-try.pages.dev" target="_blank" rel="noopener">Try the live demo ↗</a>
+        <a class="btn btn-ghost" href="https://github.com/quizmill/quizmill">Star on GitHub</a>
       </div>
     </div>
 
@@ -93,19 +95,16 @@ npm run dev</code></pre>
     <h2>Every pack becomes <em>its own app</em>.</h2>
     <p class="section-lede">
       Title, icon, theme, categories — all generated from the pack manifest at
-      build time. Pick a pack, watch the app change:
+      build time. Pick a pack, then actually <em>use</em> the app: practise,
+      unlock a sticker, check your progress. It's all in there.
     </p>
     <div class="packswitch">
       <div class="pack-chips" id="pack-chips" role="tablist" aria-label="Example packs"></div>
       <div class="phone-wrap">
         <div class="phone" id="phone">
           <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <div class="app-icon" id="app-icon">SSP</div>
-            <h3 class="app-title" id="app-title">Solar System Practice</h3>
-            <p class="app-subtitle" id="app-subtitle">The demo pack.</p>
-            <div class="app-cats" id="app-cats"></div>
-            <button class="app-practice" id="app-practice" type="button">Practice</button>
+          <div class="phone-screen" id="phone-screen">
+            <div class="mini-app" id="mini-app"></div>
             <div class="app-installbar">⊕ Add to Home Screen — works offline</div>
           </div>
         </div>
@@ -207,6 +206,8 @@ npm run dev</code></pre>
       <div class="feature"><h3>⟳ Mistakes that come back</h3><p>Wrong answers queue up and are re-asked until you rescue them. The loop is the product.</p></div>
       <div class="feature"><h3>◌ Unseen-biased practice</h3><p>Weighted random selection that favours questions you haven't met, tunable per category blueprint.</p></div>
       <div class="feature"><h3>▦ Offline-first PWA</h3><p>Installable to the home screen with a versioned service worker. Aeroplane-mode proof.</p></div>
+      <div class="feature"><h3>★ Sticker cabinet</h3><p>Streaks, volume, daily habit, and per-category mastery — every pack grows its own cabinet of earned stickers.</p></div>
+      <div class="feature"><h3>▥ Progress charts</h3><p>Accuracy by category and over time, plus a weakest-questions list that links straight back into practice.</p></div>
       <div class="feature"><h3>✎ Per-question feedback</h3><p>Thumbs up/down with comments, surfaced in Settings so pack authors can curate the bank.</p></div>
       <div class="feature"><h3>↗ Source attribution</h3><p>Questions carry a <code>sourceRef</code>; the answer panel links to the original author's work.</p></div>
       <div class="feature"><h3>⇅ Optional cloud sync</h3><p>Magic-link auth + Supabase mirroring with a retry queue. Dormant unless you configure it.</p></div>
@@ -290,7 +291,9 @@ git push   # → installable by anyone</code></pre>
     </div>
     <p>Answer → review → retry. The wheel keeps turning.</p>
     <nav>
+      <a href="https://quizmill-try.pages.dev" target="_blank" rel="noopener">Live demo</a>
       <a href="https://github.com/quizmill/quizmill">Engine</a>
+      <a href="https://www.npmjs.com/package/quizmill">npm</a>
       <a href="https://github.com/quizmill/quizmill/blob/main/tools/pack/registry.json">Pack registry</a>
       <a href="https://github.com/quizmill/pack-claude-cert">Claude Cert pack</a>
       <a href="https://github.com/quizmill/quizmill/blob/main/LICENSE">MIT</a>

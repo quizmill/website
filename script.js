@@ -1,8 +1,11 @@
 /* quizmill.dev — all interactivity, no dependencies.
    Three exhibits: (1) a real practice loop in the hero, with the
-   mistakes re-queue; (2) the pack→app switcher; (3) the agent terminal.
+   mistakes re-queue and a sticker unlock; (2) the pack→app switcher,
+   now a navigable mini quizmill instance (home / practice / stickers /
+   progress); (3) the agent terminal.
 */
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TRY_URL = 'https://quizmill-try.pages.dev';
 
 /* ————— 1. The live practice loop ————— */
 /* Five questions straight from the bundled demo pack. */
@@ -69,7 +72,8 @@ function startQuiz() {
     missed: new Set(),
     rescued: new Set(),
     doneFirstTry: new Set(),
-    seenCount: 0,
+    streak: 0,
+    streakStickerShown: false,
   };
   renderQuestion(state);
 }
@@ -122,11 +126,20 @@ function answer(state, idx, picked) {
 
   state.queue.shift();
   if (right) {
+    state.streak += 1;
     if (state.missed.has(idx)) state.rescued.add(idx);
     else state.doneFirstTry.add(idx);
   } else {
+    state.streak = 0;
     state.missed.add(idx);
     state.queue.push(idx); // the whole product, in one line
+  }
+
+  // Three in a row — the sticker system, demonstrated live.
+  if (state.streak === 3 && !state.streakStickerShown) {
+    state.streakStickerShown = true;
+    stickerToast(quizEl.closest('.demo-frame'), '🔥', 'Hot streak', '3 correct in a row');
+    if (!reducedMotion) confetti(24);
   }
 
   const tail = quizEl.querySelector('.quiz-tail');
@@ -157,30 +170,46 @@ function renderEnd(state) {
       ${rescued ? `<div class="rescued">+ ${rescued} rescued from the mistakes queue ⟳</div>` : ''}
       <p>That loop you just felt — answer, review, retry — ships in every pack. Yours included.</p>
       <button class="quiz-btn" style="max-width:240px">Grind again</button>
+      <a class="quiz-link" href="${TRY_URL}" target="_blank" rel="noopener">or keep going in the real app ↗</a>
     </div>
   `;
   quizEl.querySelector('.quiz-btn').addEventListener('click', startQuiz);
   if (rescued === state.missed.size && !reducedMotion) confetti();
 }
 
-function confetti() {
+/** Sticker-unlocked toast pinned to a container (hero frame or phone). */
+function stickerToast(container, emoji, name, desc) {
+  if (!container) return;
+  container.querySelector('.sticker-toast')?.remove();
+  const toast = document.createElement('div');
+  toast.className = 'sticker-toast';
+  toast.setAttribute('role', 'status');
+  toast.innerHTML = `<span class="st-emoji">${emoji}</span><span><b>Sticker unlocked</b>${name} — ${desc}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3200);
+}
+
+function confetti(count = 70, host = document.body, fixed = true) {
   const colors = ['#b45309', '#0f766e', '#1e3a5f', '#e8943a', '#15803d'];
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0; i < count; i++) {
     const piece = document.createElement('i');
-    piece.className = 'confetti';
-    piece.style.left = Math.random() * 100 + 'vw';
+    piece.className = fixed ? 'confetti' : 'confetti confetti-local';
+    piece.style.left = Math.random() * 100 + (fixed ? 'vw' : '%');
     piece.style.background = colors[i % colors.length];
     piece.style.setProperty('--t', 1.8 + Math.random() * 1.6 + 's');
     piece.style.setProperty('--r', Math.floor(Math.random() * 720 - 360) + 'deg');
     piece.style.animationDelay = Math.random() * 0.4 + 's';
-    document.body.appendChild(piece);
+    host.appendChild(piece);
     setTimeout(() => piece.remove(), 4000);
   }
 }
 
 if (quizEl) startQuiz();
 
-/* ————— 2. Pack → app switcher ————— */
+/* ————— 2. Pack → app switcher: a navigable mini quizmill ————— */
+/* Each pack carries enough data to feel like the real app: categories
+   with seeded history, two on-theme questions, a sticker set, and a
+   daily streak. Playing updates everything live. */
 const PACKS = [
   {
     name: 'Solar System',
@@ -190,10 +219,30 @@ const PACKS = [
     title: 'Solar System Practice',
     subtitle: 'The demo pack. Build your own.',
     cats: [
-      ['Planets & Moons', 64],
-      ['Space Exploration', 38],
+      { label: 'Planets & Moons', answered: 9, acc: 67 },
+      { label: 'Space Exploration', answered: 4, acc: 75 },
     ],
-    caption: 'Ships in the repo — npm run dev and it’s there.',
+    streak: 1,
+    seedStickers: [],
+    questions: [
+      {
+        cat: 'Planets & Moons',
+        prompt: 'Which planet rotates on its side, tilted about 98°?',
+        options: ['Saturn', 'Uranus', 'Neptune', 'Jupiter'],
+        correct: 1,
+        explanation:
+          'Uranus rolls around the Sun — rings and moons orbit the tilted plane too, likely after an ancient giant impact.',
+      },
+      {
+        cat: 'Space Exploration',
+        prompt: 'Which spacecraft was first to reach interstellar space, Golden Record aboard?',
+        options: ['Voyager 1', 'Apollo 11', 'Cassini', 'New Horizons'],
+        correct: 0,
+        explanation:
+          'Voyager 1 crossed the heliopause in 2012, 35 years after launch — still phoning home on ~4 watts.',
+      },
+    ],
+    caption: 'Ships in the repo — npm run dev and it’s there. Or tap Practice ↑',
   },
   {
     name: 'Claude Cert Practice',
@@ -203,11 +252,35 @@ const PACKS = [
     title: 'Claude Cert Practice',
     subtitle: 'Architect Foundations — keep building.',
     cats: [
-      ['Agentic Architecture', 52],
-      ['Prompt Engineering', 31],
-      ['Tools & MCP', 18],
-      ['Claude Code', 44],
-      ['Context & Reliability', 26],
+      { label: 'Agentic Architecture', answered: 52, acc: 81 },
+      { label: 'Prompt Engineering', answered: 31, acc: 74 },
+      { label: 'Tools & MCP', answered: 18, acc: 61 },
+      { label: 'Claude Code', answered: 44, acc: 86 },
+    ],
+    streak: 6,
+    seedStickers: ['volume'],
+    questions: [
+      {
+        cat: 'Tools & MCP',
+        prompt: 'In MCP, which component exposes tools for a client to call?',
+        options: ['The model', 'An MCP server', 'The system prompt', 'The transport layer'],
+        correct: 1,
+        explanation:
+          'Servers advertise tools (and resources, prompts); clients connect and the model decides when to call them.',
+      },
+      {
+        cat: 'Prompt Engineering',
+        prompt: 'Most reliable way to get strict JSON out of Claude?',
+        options: [
+          'Ask twice, firmly',
+          'Define a tool schema and require the tool call',
+          'Set temperature to 0 and hope',
+          'Append "JSON ONLY!!" to the prompt',
+        ],
+        correct: 1,
+        explanation:
+          'Tool use validates against a JSON Schema at the API layer — the model retries on mismatch. Prompt pleading does not.',
+      },
     ],
     caption: 'npm run pack:use quizmill/pack-claude-cert',
   },
@@ -219,9 +292,27 @@ const PACKS = [
     title: '11+ Practice',
     subtitle: "Let's keep going.",
     cats: [
-      ['English', 71],
-      ['Maths', 55],
-      ['Verbal Reasoning', 62],
+      { label: 'English', answered: 71, acc: 78 },
+      { label: 'Maths', answered: 55, acc: 83 },
+      { label: 'Verbal Reasoning', answered: 62, acc: 71 },
+    ],
+    streak: 11,
+    seedStickers: ['streak', 'volume'],
+    questions: [
+      {
+        cat: 'Maths',
+        prompt: 'What is ¾ of 96?',
+        options: ['64', '72', '68', '76'],
+        correct: 1,
+        explanation: '96 ÷ 4 = 24, then 24 × 3 = 72. Quarter first, then scale.',
+      },
+      {
+        cat: 'Verbal Reasoning',
+        prompt: 'Find the four-letter word hidden across two words: “the camp lanterns flickered”',
+        options: ['plan', 'tern', 'lamp', 'lick'],
+        correct: 0,
+        explanation: 'cam(p lan)terns — hidden words straddle the join between words.',
+      },
     ],
     caption: 'Private repos install the same way. Nobody else ever sees it.',
   },
@@ -233,16 +324,64 @@ const PACKS = [
     title: 'Kubernetes Networking',
     subtitle: 'Packets find a way.',
     cats: [
-      ['Services & kube-proxy', 12],
-      ['Ingress & Gateway', 5],
-      ['NetworkPolicy', 0],
+      { label: 'Services & kube-proxy', answered: 12, acc: 75 },
+      { label: 'Ingress & Gateway', answered: 5, acc: 60 },
+      { label: 'NetworkPolicy', answered: 0, acc: 0 },
+    ],
+    streak: 0,
+    seedStickers: [],
+    questions: [
+      {
+        cat: 'Services & kube-proxy',
+        prompt: 'A ClusterIP Service routes to zero endpoints. Most likely cause?',
+        options: [
+          'kube-proxy is down on the control plane',
+          'The Service selector matches no Pod labels',
+          'CoreDNS lost the Service record',
+          'The Pods lack a readinessProbe',
+        ],
+        correct: 1,
+        explanation:
+          'Endpoints are computed from the selector; no matching labels → empty endpoint set. DNS still resolves — at nothing.',
+      },
+      {
+        cat: 'NetworkPolicy',
+        prompt: 'Once a NetworkPolicy selects a pod, traffic not matched by any rule is…',
+        options: ['allowed', 'denied', 'logged and allowed', 'rate-limited'],
+        correct: 1,
+        explanation:
+          'Selection flips the default: in the policed direction, anything no rule allows is dropped. Unselected pods stay wide open.',
+      },
     ],
     caption: '“Make me a learning pack about Kubernetes networking.” — that’s the whole workflow.',
   },
 ];
 
+/* Sticker definitions for the mini cabinet — mirrors the real app:
+   static stickers + one mastery sticker per pack category. */
+const MASTERY_EMOJIS = ['📚', '🧮', '🧩', '🔬', '🪐', '🗺️'];
+function packStickers(p) {
+  const mastery = p.cats.slice(0, 2).map((c, i) => ({
+    id: `mastery-${i}`,
+    emoji: MASTERY_EMOJIS[i % MASTERY_EMOJIS.length],
+    name: `${c.label.split(' ')[0]} mastery`,
+    desc: `80% on 30+ ${c.label} questions`,
+  }));
+  return [
+    { id: 'first', emoji: '🎈', name: 'First steps', desc: 'Finish your first session' },
+    { id: 'flawless', emoji: '✨', name: 'Flawless', desc: '100% on a full round' },
+    { id: 'streak', emoji: '🔥', name: 'Hot streak', desc: '5 correct in a row' },
+    { id: 'volume', emoji: '💯', name: 'Centurion', desc: 'Answer 100 questions' },
+    ...mastery,
+  ];
+}
+
 const chipsEl = document.getElementById('pack-chips');
-if (chipsEl) {
+const miniEl = document.getElementById('mini-app');
+const phoneScreen = document.getElementById('phone-screen');
+let mini = null; // live state for the selected pack
+
+if (chipsEl && miniEl) {
   PACKS.forEach((p, i) => {
     const chip = document.createElement('button');
     chip.className = 'pack-chip' + (i === 0 ? ' is-active' : '');
@@ -258,18 +397,213 @@ if (chipsEl) {
 function selectPack(i) {
   const p = PACKS[i];
   chipsEl.querySelectorAll('.pack-chip').forEach((c, j) => c.classList.toggle('is-active', i === j));
-  const screen = document.querySelector('.phone-screen');
-  screen.style.setProperty('--ac', p.color);
-  document.getElementById('app-icon').textContent = p.initials;
-  document.getElementById('app-title').textContent = p.title;
-  document.getElementById('app-subtitle').textContent = p.subtitle;
-  document.getElementById('app-cats').innerHTML = p.cats
-    .map(
-      ([label, pct]) =>
-        `<div class="app-cat">${label}<div class="bar"><i style="--p:${pct}%"></i></div></div>`,
-    )
-    .join('');
+  phoneScreen.style.setProperty('--ac', p.color);
   document.getElementById('phone-caption').textContent = p.caption;
+  mini = {
+    pack: p,
+    // Deep-copy seeded history so replays and pack switches reset cleanly.
+    cats: p.cats.map((c) => ({ ...c })),
+    stickers: new Set(p.seedStickers),
+    streak: p.streak,
+    sessions: 0,
+  };
+  miniHome();
+}
+
+function miniTotals() {
+  let answered = 0;
+  let correct = 0;
+  for (const c of mini.cats) {
+    answered += c.answered;
+    correct += Math.round((c.answered * c.acc) / 100);
+  }
+  return { answered, acc: answered ? Math.round((correct / answered) * 100) : 0 };
+}
+
+function miniHome() {
+  const p = mini.pack;
+  const t = miniTotals();
+  miniEl.innerHTML = `
+    <div class="ma-head">
+      <div class="app-icon">${p.initials}</div>
+      <div class="ma-nav">
+        <button data-go="progress" aria-label="Progress" title="Progress">▤</button>
+        <button data-go="stickers" aria-label="Sticker cabinet" title="Sticker cabinet">★</button>
+      </div>
+    </div>
+    <h3 class="app-title">${p.title}</h3>
+    <p class="app-subtitle">${p.subtitle}</p>
+    <div class="ma-stats">
+      <div class="ma-stat"><b>${t.answered}</b><span>answered</span></div>
+      <div class="ma-stat"><b>${t.acc}%</b><span>accuracy</span></div>
+    </div>
+    <div class="ma-cats">
+      ${mini.cats
+        .map(
+          (c, i) => `
+        <button class="ma-cat" data-cat="${i}">
+          <span>${c.label}<small>${c.answered ? `${c.answered} answered · ${c.acc}%` : 'start here'}</small></span>
+          <span class="ma-cat-go">›</span>
+        </button>`,
+        )
+        .join('')}
+    </div>
+    <button class="app-practice" data-practice>Practice</button>
+  `;
+  miniEl.querySelectorAll('[data-go]').forEach((b) =>
+    b.addEventListener('click', () => (b.dataset.go === 'stickers' ? miniStickers() : miniProgress())),
+  );
+  miniEl.querySelectorAll('[data-cat], [data-practice]').forEach((b) =>
+    b.addEventListener('click', () => miniPractice()),
+  );
+}
+
+function miniPractice() {
+  const qs = mini.pack.questions;
+  const session = { i: 0, correct: 0 };
+  askMini(qs, session);
+}
+
+function askMini(qs, session) {
+  const q = qs[session.i];
+  miniEl.innerHTML = `
+    <div class="ma-head">
+      <button class="ma-back" data-home>‹ Home</button>
+      <span class="ma-count">Q ${session.i + 1} / ${qs.length}</span>
+    </div>
+    <span class="ma-chip">${q.cat}</span>
+    <div class="ma-q">${q.prompt}</div>
+    <div class="ma-opts">
+      ${q.options
+        .map(
+          (text, i) =>
+            `<button class="ma-opt" data-i="${i}"><span class="key">${'ABCD'[i]}</span><span>${text}</span></button>`,
+        )
+        .join('')}
+    </div>
+    <div class="ma-tail"></div>
+  `;
+  miniEl.querySelector('[data-home]').addEventListener('click', miniHome);
+  miniEl.querySelectorAll('.ma-opt').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const picked = Number(btn.dataset.i);
+      const right = picked === q.correct;
+      turnWheel();
+      if (right) session.correct += 1;
+      miniEl.querySelectorAll('.ma-opt').forEach((b) => {
+        const i = Number(b.dataset.i);
+        b.disabled = true;
+        if (i === q.correct) b.classList.add('is-correct');
+        else if (i === picked) b.classList.add('is-wrong');
+        else b.classList.add('is-dim');
+      });
+      // Update the live category history, like a real recorded attempt.
+      const cat = mini.cats.find((c) => c.label === q.cat);
+      if (cat) {
+        const correctSoFar = Math.round((cat.answered * cat.acc) / 100) + (right ? 1 : 0);
+        cat.answered += 1;
+        cat.acc = Math.round((correctSoFar / cat.answered) * 100);
+      }
+      const last = session.i + 1 === qs.length;
+      miniEl.querySelector('.ma-tail').innerHTML = `
+        <div class="ma-feedback ${right ? 'good' : 'bad'}">
+          <b>${right ? 'Correct.' : 'Not quite.'}</b> ${q.explanation}
+        </div>
+        <button class="ma-next">${last ? 'See results' : 'Next question'}</button>
+      `;
+      miniEl.querySelector('.ma-next').addEventListener('click', () => {
+        if (last) finishMini(qs, session);
+        else {
+          session.i += 1;
+          askMini(qs, session);
+        }
+      });
+    });
+  });
+}
+
+function finishMini(qs, session) {
+  mini.sessions += 1;
+  if (mini.streak === 0) mini.streak = 1;
+  const fresh = [];
+  if (!mini.stickers.has('first')) fresh.push('first');
+  if (session.correct === qs.length && !mini.stickers.has('flawless')) fresh.push('flawless');
+  fresh.forEach((id) => mini.stickers.add(id));
+
+  const all = packStickers(mini.pack);
+  miniEl.innerHTML = `
+    <div class="ma-head"><button class="ma-back" data-home>‹ Home</button></div>
+    <div class="ma-end">
+      <div class="ma-score">${session.correct}/${qs.length}</div>
+      <div class="ma-end-sub">${session.correct === qs.length ? 'flawless round' : 'keep the wheel turning'}</div>
+      <button class="app-practice" data-again>Another round</button>
+      <button class="ma-ghost" data-stickers>Sticker cabinet ★</button>
+    </div>
+  `;
+  miniEl.querySelector('[data-home]').addEventListener('click', miniHome);
+  miniEl.querySelector('[data-again]').addEventListener('click', miniPractice);
+  miniEl.querySelector('[data-stickers]').addEventListener('click', miniStickers);
+
+  if (fresh.length) {
+    const s = all.find((x) => x.id === fresh[0]);
+    stickerToast(phoneScreen, s.emoji, s.name, s.desc);
+    if (!reducedMotion) confetti(18, phoneScreen, false);
+  }
+}
+
+function miniStickers() {
+  const all = packStickers(mini.pack);
+  const earned = mini.stickers;
+  miniEl.innerHTML = `
+    <div class="ma-head">
+      <button class="ma-back" data-home>‹ Home</button>
+      <span class="ma-count">${earned.size} / ${all.length} stickers</span>
+    </div>
+    <h3 class="ma-h">Sticker cabinet</h3>
+    <div class="ma-grid">
+      ${all
+        .map((s) => {
+          const got = earned.has(s.id);
+          return `<div class="ma-sticker ${got ? 'is-earned' : ''}">
+            <span class="ma-sticker-emoji">${s.emoji}</span>
+            <b>${s.name}</b><small>${s.desc}</small>
+            ${got ? '' : '<small class="ma-locked">locked</small>'}
+          </div>`;
+        })
+        .join('')}
+    </div>
+    <p class="ma-note">Earn them by practising — this cabinet is live.</p>
+  `;
+  miniEl.querySelector('[data-home]').addEventListener('click', miniHome);
+}
+
+function miniProgress() {
+  const days = [55, 70, 40, 80, 65, 90, miniTotals().acc || 50];
+  miniEl.innerHTML = `
+    <div class="ma-head">
+      <button class="ma-back" data-home>‹ Home</button>
+      ${mini.streak ? `<span class="ma-streak">🔥 ${mini.streak}-day streak</span>` : ''}
+    </div>
+    <h3 class="ma-h">Progress</h3>
+    <div class="ma-section">Accuracy by category</div>
+    <div class="ma-bars">
+      ${mini.cats
+        .map(
+          (c) => `
+        <div class="ma-bar-row">
+          <span>${c.label}</span><em>${c.answered ? c.acc + '%' : '—'}</em>
+          <div class="bar"><i style="--p:${c.answered ? Math.max(c.acc, 4) : 0}%"></i></div>
+        </div>`,
+        )
+        .join('')}
+    </div>
+    <div class="ma-section">Last 7 days</div>
+    <div class="ma-days">
+      ${days.map((h) => `<i style="--h:${h}%"></i>`).join('')}
+    </div>
+    <p class="ma-note">Weakest questions queue up for review — the wheel brings them back.</p>
+  `;
+  miniEl.querySelector('[data-home]').addEventListener('click', miniHome);
 }
 
 /* ————— 3. The agent terminal ————— */
