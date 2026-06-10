@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650;9..144,750&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=2" />
 </head>
 <body>
 
@@ -40,7 +40,7 @@
     <a href="#agent">Agent</a>
     <a href="#format">Format</a>
     <a href="#install">Install</a>
-    <a href="https://quizmill-try.pages.dev" target="_blank" rel="noopener">Try it ↗</a>
+    <a href="https://try.quizmill.dev" target="_blank" rel="noopener">Try it ↗</a>
     <a class="gh-btn" href="https://github.com/quizmill/quizmill">
       <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
       GitHub
@@ -61,6 +61,10 @@
         Better still: don't write the questions at all.
         <strong>Your AI agent does.</strong>
       </p>
+      <p class="type-line" aria-hidden="true">
+        <span class="tl-you">you →</span> Make me a pack about
+        <span class="type-rotator" id="typer"></span><span class="type-caret"></span>
+      </p>
       <div class="code-block" data-copy>
         <button class="copy-btn" aria-label="Copy commands">copy</button>
         <pre><code><span class="c">« three commands to your own practice app »</span>
@@ -69,7 +73,7 @@ cd quizmill &amp;&amp; npm install
 npm run dev</code></pre>
       </div>
       <div class="cta-row">
-        <a class="btn btn-primary" href="https://quizmill-try.pages.dev" target="_blank" rel="noopener">Try the live demo ↗</a>
+        <a class="btn btn-primary" href="https://try.quizmill.dev" target="_blank" rel="noopener">Try the live demo ↗</a>
         <a class="btn btn-ghost" href="https://github.com/quizmill/quizmill">Star on GitHub</a>
       </div>
     </div>
@@ -109,6 +113,66 @@ npm run dev</code></pre>
           </div>
         </div>
         <div class="phone-caption" id="phone-caption"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== INSIDE EVERY APP (showcase) ====================== -->
+  <section class="section section-tint" id="inside">
+    <p class="eyebrow">Not just flashcards</p>
+    <h2>A practice app that <em>keeps you coming back</em>.</h2>
+    <p class="section-lede">
+      Stickers to chase, progress to watch climb, and explanations that
+      actually teach — every pack ships the lot. Here's a real look.
+    </p>
+    <div class="showcase">
+      <!-- Sticker cabinet -->
+      <div class="show-card reveal">
+        <h3>★ Sticker cabinet</h3>
+        <p class="show-sub">Streaks, volume, daily habit, per-category mastery.</p>
+        <div class="show-stickers">
+          <div class="sc earned"><span>🔥</span><b>Hot streak</b></div>
+          <div class="sc earned"><span>💯</span><b>Centurion</b></div>
+          <div class="sc earned"><span>🪐</span><b>Planets</b></div>
+          <div class="sc"><span>🗓️</span><b>A whole week</b></div>
+          <div class="sc"><span>🚀</span><b>Legendary</b></div>
+          <div class="sc"><span>✨</span><b>Flawless</b></div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="show-card reveal">
+        <div class="show-head">
+          <h3>▥ Progress</h3>
+          <span class="show-streak">🔥 6-day streak</span>
+        </div>
+        <p class="show-sub">Accuracy by category, and the trend over time.</p>
+        <div class="show-bars">
+          <div class="sb"><span>Agentic Architecture</span><em>81%</em><div class="bar"><i style="--p:81%"></i></div></div>
+          <div class="sb"><span>Claude Code</span><em>86%</em><div class="bar"><i style="--p:86%"></i></div></div>
+          <div class="sb"><span>Tools &amp; MCP</span><em>61%</em><div class="bar"><i style="--p:61%;--c:var(--warn)"></i></div></div>
+        </div>
+        <div class="show-spark" aria-hidden="true">
+          <i style="--h:45%"></i><i style="--h:60%"></i><i style="--h:50%"></i>
+          <i style="--h:72%"></i><i style="--h:64%"></i><i style="--h:85%"></i><i style="--h:80%"></i>
+        </div>
+        <p class="show-foot">Last 7 days — weak spots re-queue for review.</p>
+      </div>
+
+      <!-- Explanation with source link -->
+      <div class="show-card reveal">
+        <h3>✎ Explanations that teach</h3>
+        <p class="show-sub">Markdown, with real source links and attribution.</p>
+        <div class="show-explain">
+          <div class="se-verdict">Correct.</div>
+          <p>
+            Endpoints are computed from the Service selector — no matching
+            Pod labels means an empty endpoint set. DNS still resolves; it
+            just points at nothing.
+            <a href="https://kubernetes.io/docs/concepts/services-networking/service/" target="_blank" rel="noopener" class="explain-link">Kubernetes docs: Service ↗</a>
+          </p>
+          <div class="se-source">Source: kubernetes.io · reviewed</div>
+        </div>
       </div>
     </div>
   </section>
@@ -291,7 +355,7 @@ git push   # → installable by anyone</code></pre>
     </div>
     <p>Answer → review → retry. The wheel keeps turning.</p>
     <nav>
-      <a href="https://quizmill-try.pages.dev" target="_blank" rel="noopener">Live demo</a>
+      <a href="https://try.quizmill.dev" target="_blank" rel="noopener">Live demo</a>
       <a href="https://github.com/quizmill/quizmill">Engine</a>
       <a href="https://www.npmjs.com/package/quizmill">npm</a>
       <a href="https://github.com/quizmill/quizmill/blob/main/tools/pack/registry.json">Pack registry</a>
@@ -301,6 +365,6 @@ git push   # → installable by anyone</code></pre>
   </div>
 </footer>
 
-<script src="script.js" defer></script>
+<script src="script.js?v=2" defer></script>
 </body>
 </html>

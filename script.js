@@ -5,7 +5,7 @@
    progress); (3) the agent terminal.
 */
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const TRY_URL = 'https://quizmill-try.pages.dev';
+const TRY_URL = 'https://try.quizmill.dev';
 
 /* ————— 1. The live practice loop ————— */
 /* Five questions straight from the bundled demo pack. */
@@ -41,7 +41,7 @@ const QUESTIONS = [
     options: ['Phobos (Mars)', 'Enceladus (Saturn)', 'Callisto (Jupiter)', 'Triton (Neptune)'],
     correct: 1,
     explanation:
-      "Cassini flew through Enceladus's south-polar water plumes, confirming a salty subsurface ocean. Triton's geysers are nitrogen, not water.",
+      "Cassini flew through Enceladus's south-polar water plumes, confirming a salty subsurface ocean. Triton's geysers are nitrogen, not water. — [NASA: Enceladus](https://science.nasa.gov/saturn/moons/enceladus/)",
   },
   {
     prompt: 'What disqualifies Pluto from being a planet under the 2006 IAU definition?',
@@ -56,6 +56,26 @@ const QUESTIONS = [
       'Pluto fails only the third test: it shares the Kuiper belt with many similar bodies. It is round, and it is bigger than several moons.',
   },
 ];
+
+/** Render the markdown subset packs use in explanations — [text](url)
+ *  links — into safe HTML. Mirrors the engine's McqMarkdown for links:
+ *  external refs become real, attributed anchors. Everything else is
+ *  escaped so explanation text can't inject markup. */
+function linkify(text) {
+  const esc = (s) =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  let out = '';
+  let last = 0;
+  const re = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
+  let m;
+  while ((m = re.exec(text))) {
+    out += esc(text.slice(last, m.index));
+    out += `<a href="${esc(m[2])}" target="_blank" rel="noopener" class="explain-link">${esc(m[1])} ↗</a>`;
+    last = m.index + m[0].length;
+  }
+  out += esc(text.slice(last));
+  return out;
+}
 
 const quizEl = document.getElementById('quiz');
 const headerWheel = document.querySelector('#header-wheel .wheel-spin');
@@ -146,7 +166,7 @@ function answer(state, idx, picked) {
   tail.innerHTML = `
     <div class="quiz-feedback ${right ? 'good' : 'bad'}">
       <span class="verdict">${right ? (state.rescued.has(idx) ? 'Rescued.' : 'Correct.') : 'Not quite.'}</span>
-      ${q.explanation}
+      ${linkify(q.explanation)}
       ${!right ? '<span class="comeback">⟳ Re-queued — it comes back until you get it right.</span>' : ''}
     </div>
     <div class="quiz-next">
@@ -239,7 +259,7 @@ const PACKS = [
         options: ['Voyager 1', 'Apollo 11', 'Cassini', 'New Horizons'],
         correct: 0,
         explanation:
-          'Voyager 1 crossed the heliopause in 2012, 35 years after launch — still phoning home on ~4 watts.',
+          'Voyager 1 crossed the heliopause in 2012, 35 years after launch — still phoning home on ~4 watts. — [NASA: Voyager](https://science.nasa.gov/mission/voyager/)',
       },
     ],
     caption: 'Ships in the repo — npm run dev and it’s there. Or tap Practice ↑',
@@ -507,7 +527,7 @@ function askMini(qs, session) {
       const last = session.i + 1 === qs.length;
       miniEl.querySelector('.ma-tail').innerHTML = `
         <div class="ma-feedback ${right ? 'good' : 'bad'}">
-          <b>${right ? 'Correct.' : 'Not quite.'}</b> ${q.explanation}
+          <b>${right ? 'Correct.' : 'Not quite.'}</b> ${linkify(q.explanation)}
         </div>
         <button class="ma-next">${last ? 'See results' : 'Next question'}</button>
       `;
@@ -679,6 +699,60 @@ document.querySelectorAll('.tab').forEach((tab) => {
     });
   });
 });
+
+/* ————— hero typing rotator ————— */
+const TOPICS = [
+  'Kubernetes networking',
+  'Spanish irregular verbs',
+  'the GRE',
+  'music theory',
+  'the periodic table',
+  'your own codebase',
+];
+const typer = document.getElementById('typer');
+if (typer) {
+  if (reducedMotion) {
+    typer.textContent = TOPICS[0];
+  } else {
+    (async () => {
+      for (let n = 0; ; n++) {
+        const word = TOPICS[n % TOPICS.length];
+        for (let i = 1; i <= word.length; i++) {
+          typer.textContent = word.slice(0, i);
+          await wait(55);
+        }
+        await wait(1400);
+        for (let i = word.length; i >= 0; i--) {
+          typer.textContent = word.slice(0, i);
+          await wait(28);
+        }
+        await wait(250);
+      }
+    })();
+  }
+}
+
+/* ————— scroll-reveal: fade-up sections + cards as they enter view ————— */
+if (!reducedMotion && 'IntersectionObserver' in window) {
+  const groups = ['.feature', '.install-card', '.pack-card', '.agent-step', '.show-card'];
+  document.querySelectorAll(groups.join(',')).forEach((el) => el.classList.add('reveal'));
+  const revealIO = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        // Stagger siblings for a gentle cascade.
+        const sibs = [...(e.target.parentElement?.children ?? [])].filter((c) =>
+          c.classList.contains('reveal'),
+        );
+        e.target.style.transitionDelay = Math.min(sibs.indexOf(e.target), 6) * 70 + 'ms';
+        e.target.classList.add('is-in');
+        obs.unobserve(e.target);
+      });
+    },
+    { threshold: 0.15 },
+  );
+  document.querySelectorAll('.reveal').forEach((el) => revealIO.observe(el));
+}
 
 document.querySelectorAll('[data-copy] .copy-btn').forEach((btn) => {
   btn.addEventListener('click', async () => {
