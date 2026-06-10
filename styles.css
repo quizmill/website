@@ -100,7 +100,11 @@ pre code { background: none; padding: 0; }
   padding: clamp(40px, 7vh, 90px) clamp(20px, 5vw, 56px);
   max-width: 1240px; margin: 0 auto;
 }
-@media (max-width: 920px) { .hero { grid-template-columns: 1fr; } }
+/* Stacked: lead with the live demo, not a wall of copy. */
+@media (max-width: 920px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-demo { order: -1; }
+}
 .eyebrow {
   font-size: 12.5px; font-weight: 750; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--grain); margin: 0 0 14px;
@@ -247,9 +251,9 @@ h1 em, h2 em { font-style: italic; color: var(--grain); }
   display: flex; align-items: center; gap: 14px; text-align: left;
   border: 2px solid var(--line); border-radius: 16px; background: var(--card);
   padding: 14px 16px; cursor: pointer; font: 550 15px/1.4 var(--body); color: var(--ink);
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.pack-chip:hover { transform: translateX(4px); }
+.pack-chip:hover { border-color: color-mix(in srgb, var(--pc, var(--grain)) 45%, var(--line)); }
 .pack-chip.is-active { border-color: var(--pc, var(--grain)); box-shadow: 0 6px 18px color-mix(in srgb, var(--pc, var(--grain)) 22%, transparent); }
 .pack-chip .swatch {
   flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; background: var(--pc);
@@ -258,7 +262,10 @@ h1 em, h2 em { font-style: italic; color: var(--grain); }
 }
 .pack-chip small { display: block; color: var(--stone); font-size: 13px; }
 
-.phone-wrap { justify-self: center; text-align: center; }
+/* Fixed to the phone's own width so the grid's auto column never resizes
+   with the per-pack caption text — otherwise switching packs shoved the
+   phone left and right. The caption now wraps within this width. */
+.phone-wrap { justify-self: center; text-align: center; width: 280px; }
 .phone {
   width: 280px; border-radius: 40px; border: 10px solid var(--ink);
   background: var(--paper); overflow: hidden; position: relative;
@@ -283,7 +290,7 @@ h1 em, h2 em { font-style: italic; color: var(--grain); }
   color: #fff; font: 750 15px/1 var(--body); padding: 13px; cursor: pointer; transition: background 0.4s ease;
 }
 .app-installbar { margin-top: auto; padding-top: 14px; text-align: center; color: var(--stone); font-size: 11.5px; }
-.phone-caption { margin-top: 16px; color: var(--stone); font-size: 14px; min-height: 1.5em; }
+.phone-caption { margin-top: 16px; color: var(--stone); font-size: 14px; min-height: 3em; }
 
 /* ——— terminal / agent ——— */
 .section-dark { max-width: none; background: var(--code-bg); color: var(--code-ink); }
@@ -459,9 +466,9 @@ h1 em, h2 em { font-style: italic; color: var(--grain); }
 .ma-nav button {
   width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
   border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
-  font-size: 14px; line-height: 1; transition: transform 0.15s ease, border-color 0.15s ease;
+  font-size: 14px; line-height: 1; transition: border-color 0.15s ease, color 0.15s ease;
 }
-.ma-nav button:hover { transform: rotate(12deg) scale(1.1); border-color: var(--ac, var(--teal)); }
+.ma-nav button:hover { border-color: var(--ac, var(--teal)); color: var(--ac, var(--teal)); }
 .mini-app .app-title { font-size: 19px; }
 .mini-app .app-subtitle { margin-bottom: 12px; }
 .ma-back {
@@ -479,9 +486,9 @@ h1 em, h2 em { font-style: italic; color: var(--grain); }
   display: flex; align-items: center; justify-content: space-between; gap: 8px; text-align: left;
   border: 1.5px solid var(--line); border-radius: 12px; background: var(--card);
   padding: 9px 12px; font: 650 13px/1.3 var(--body); color: var(--ink); cursor: pointer;
-  transition: border-color 0.12s ease, transform 0.12s ease;
+  transition: border-color 0.12s ease;
 }
-.ma-cat:hover { border-color: var(--ac, var(--teal)); transform: translateX(2px); }
+.ma-cat:hover { border-color: var(--ac, var(--teal)); }
 .ma-cat small { display: block; font-weight: 500; color: var(--stone); font-size: 11px; }
 .ma-cat-go { color: var(--stone); font-size: 16px; }
 .mini-app .app-practice { margin-top: 12px; }
