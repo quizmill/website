@@ -256,6 +256,14 @@ npm run dev</code></pre>
       </div>
     </div>
     <p class="format-note">
+      <strong>Schema v2</strong> adds the rest — <strong>2–6 options</strong>
+      (true/false through multi-choice), <strong>images</strong> on questions
+      and answers (non-verbal reasoning included), an optional
+      <code>concepts.json</code> of teaching cards shown after a wrong answer,
+      and a pack-defined <strong>level</strong> dimension to filter practice by.
+      v1 packs keep working unchanged.
+    </p>
+    <p class="format-note">
       The Zod schema + validator CLI (<code>npm run pack:validate</code>) cross-checks
       ids, category references, scenario references and weights — and exits
       non-zero with per-question errors. That's what agents loop on.
@@ -269,6 +277,8 @@ npm run dev</code></pre>
     <div class="feature-grid">
       <div class="feature"><h3>⟳ Mistakes that come back</h3><p>Wrong answers queue up and are re-asked until you rescue them. The loop is the product.</p></div>
       <div class="feature"><h3>◌ Unseen-biased practice</h3><p>Weighted random selection that favours questions you haven't met, tunable per category blueprint.</p></div>
+      <div class="feature"><h3>🖼 Images &amp; any question shape</h3><p>Questions and answers can carry images — non-verbal reasoning, diagrams — and options run 2–6, from true/false to multi-choice.</p></div>
+      <div class="feature"><h3>📖 Concept cards &amp; levels</h3><p>Short teaching cards surface after a wrong answer, and pack-defined level bands (Year, grade, CEFR…) let you filter practice.</p></div>
       <div class="feature"><h3>▦ Offline-first PWA</h3><p>Installable to the home screen with a versioned service worker. Aeroplane-mode proof.</p></div>
       <div class="feature"><h3>★ Sticker cabinet</h3><p>Streaks, volume, daily habit, and per-category mastery — every pack grows its own cabinet of earned stickers.</p></div>
       <div class="feature"><h3>▥ Progress charts</h3><p>Accuracy by category and over time, plus a weakest-questions list that links straight back into practice.</p></div>
